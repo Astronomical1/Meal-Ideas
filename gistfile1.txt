@@ -1,0 +1,54 @@
+'use strict';
+var Alexa = require('alexa-sdk');
+var APP_ID =  "amzn1.echo-sdk-ams.app.[acaf8b45-a560-4274-8201-6e811aeae6a7]";
+var SKILL_NAME = 'Meal Ideas';
+
+var IDEAS = [
+    "A turkey burger is a great idea.",
+    "A fruit smoothie has a plentyful fruit serving.",
+    "A Peanut butter sandwich has the protein to get you through the day.",
+    "A ham and cheese sand wich is a pretty tasty choice.",
+    "Chicken and broccli is a great choice.",
+    "A Salmon burger sounds good.",
+    "Why not a vegetable lasugana.",
+    "A omlet seems good.",
+    "Seems like a great time for a salad.",
+    
+];
+
+exports.handler = function(event, context, callback) {
+    var alexa = Alexa.handler(event, context);
+    alexa.APP_ID = APP_ID ;
+    alexa.registerHandlers(handlers);
+    alexa.execute();
+};
+
+var handlers = {
+    'LaunchRequest': function () {
+        this.emit('GetIdea');
+    },
+    'GetNewMealIdeaIntent': function () {
+        this.emit('GetIdea');
+    },
+    'GetIdea': function () {
+        // Get a random space fact from the space facts list
+        var IdeaIndex = Math.floor(Math.random() * IDEAS.length);
+        var randomIdea = IDEAS[IdeaIndex];
+
+        // Create speech output
+        var speechOutput = randomIdea;
+
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME, randomIdea)
+    },
+    'AMAZON.HelpIntent': function () {
+        var speechOutput = "You can say tell me a meal idea, or, you can say exit... What can I help you with?";
+        var reprompt = "What can I help you with?";
+        this.emit(':ask', speechOutput, reprompt);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', 'Goodbye!');
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', 'Goodbye!');
+    }
+};
